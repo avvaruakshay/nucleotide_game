@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :title="titles[base]">
     <span class="tag" :style="tagStyle">{{ base }}</span>
   </div>
 </template>
@@ -14,7 +14,8 @@ export default {
   },
   data () {
     return {
-      colors: { A: '#3F51B6', C: '#43A047', G: '#E54138', T: '#FD910B', X: 'black', B: 'white', '_': '#4e4e4e'}
+      colors: { A: '#3F51B6', C: '#43A047', G: '#E54138', T: '#FD910B', U: '#FD910B', X: 'black', B: 'white', '_': '#4e4e4e'},
+      titles: { A: 'Adenine', C: 'Cytosine', G: 'Guanine', T: 'Thymine', U: 'Uracil'}
     }
   },
   computed: {
@@ -29,11 +30,10 @@ export default {
 <style scoped>
 .tag {
   font-weight: bold;
-  font-size: 3rem;
+  font-size: 2.8rem;
   width: 3.2rem;
   height: 3.2rem;
   color: white;
-  font-family: 'Ubuntu Mono', Ubuntu, monospace;
   border-radius: 3px; 
   display: inline-block;
 }

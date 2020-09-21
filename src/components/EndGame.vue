@@ -1,14 +1,17 @@
 <template>
-  <div style="font-weight: bold">
-    <el-row style="top: 5rem; font-weight: bold">
+  <div style="font-weight: bold; font-size: 1rem; width: 90%; position: relative; margin: auto; top: 5rem">
+    <div class="game-info" style="padding: 0.5rem 0px; margin: 0px auto; border-top-right-radius: 5px; border-top-left-radius: 5px;">
       GAME END!
-    </el-row>
-    <el-row style="top: 5.6rem">
-      Time Taken: {{ store.playerTime }}s
-    </el-row>
-    <el-row style="top: 6.2rem">
+    </div>
+    <div class="game-info" style="padding: 0.4rem 0px">
+      Time: {{ store.playerTime }}s
+    </div>
+    <div class="game-info" style="padding: 0.4rem 0px">
       Score: {{ store.playerScore }}
-    </el-row>
+    </div>
+    <div class="game-info" style="padding: 0.5rem 0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px">
+      Nucleotides: {{ store.currentNucIndex }}
+    </div>
   </div>  
 </template>
 
@@ -24,3 +27,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.game-info {
+  background-color: #69ad8c;
+  color: #04374b;
+}
+</style>
