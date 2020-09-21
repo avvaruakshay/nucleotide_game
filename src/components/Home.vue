@@ -8,16 +8,21 @@
     <el-row>
       <el-col>
         <span style="margin-right: 30px">Time: {{ (store.timer/1000).toFixed(1) }}</span>
-        <span>Score: {{ store.score }}</span>
+        <span>Score: {{ store.playerScore }}</span>
       </el-col>
     </el-row>
 
-    <div id="lanes-panel">
-      <div style="display: inline-block; margin: 1rem">
-        <reference-lane ref="referenceStrand" :sequence="store.sequence"></reference-lane>
+    <div style="height: 20rem">
+      <div id="lanes-panel">
+        <div style="display: inline-block; margin: 1rem">
+          <reference-lane ref="referenceStrand" :sequence="store.sequence"></reference-lane>
+        </div>
+        <div style="display: inline-block; margin: 1rem">
+          <player-lane ref="playerStrand"></player-lane>
+        </div>
       </div>
-      <div style="display: inline-block; margin: 1rem">
-        <player-lane ref="playerStrand"></player-lane>
+      <div id="endgame-panel" v-if="store.gameStatus==='end'">
+        <end-game></end-game>
       </div>
     </div>
 
@@ -36,11 +41,14 @@
 import { store } from '../scripts/store.js'
 import ReferenceLane from './ReferenceLane.vue'
 import PlayerLane from './PlayerLane.vue'
+import EndGame from './EndGame.vue'
+
+const gsap = require('gsap')
 
 export default {
   name: 'Home',
   components: {
-    ReferenceLane, PlayerLane
+    ReferenceLane, PlayerLane, EndGame
   },
   data() {
     return { 
@@ -60,7 +68,8 @@ export default {
         elem2.style.cssText = "box-shadow: -5px 5px #03B2C9, -4px 4px #03B2C9, -3px 3px #03B2C9, -2px 2px #03B2C9, -1px 1px #03B2C9; top: 0px; left: -5px"
       }, 150)
 
-      context.$refs.referenceStrand.startAnimation()
+      store.enableInput()
+      store.setTimeOuts()
     },
     buttonClick(id) {
       const context = this
@@ -73,7 +82,7 @@ export default {
         const elem2 = document.getElementById(id)
         elem2.style.cssText = `box-shadow: -5px 5px ${color}, -4px 4px ${color}, -3px 3px ${color}, -2px 2px ${color}, -1px 1px ${color}; top: 0px; left: 0px`
       }, 150)
-      context.inputNucleotide(nuc)
+      store.inputNucleotide(nuc)
     },
     keyPressed(input){
       const char = input.slice(-1).toUpperCase()
@@ -81,16 +90,6 @@ export default {
       if (nucs.indexOf(char) !== -1) {
         this.buttonClick(`key-${char}`)
       }
-    },
-    inputNucleotide(nuc) {
-      const context = this
-      const sequence = store.sequence
-      const n = sequence.length
-      const i = store.currentNucIndex
-      const refNuc = store.sequence[n-i-2]
-      store.currPlayerNuc = nuc
-      if (nuc != store.complement[refNuc]) { store.currPlayerNuc = 'X'; store.playerNucleotides = ['B', 'B', 'X', store.prevPlayerNuc] }
-      else { store.playerNucleotides = ['B', 'B', nuc, store.prevPlayerNuc] }
     }
   },
   computed: {
@@ -102,11 +101,21 @@ export default {
 <style>
 
 #lanes-panel {
-  width: 10.4rem;
+  width: 10.8rem;
+  height: 19.6rem;
   border: 1px solid #dedede;
   border-radius: 10px;
-  padding: 10px;
   margin: 0 auto; 
+}
+#endgame-panel {
+   position: relative;
+   display: block;
+   top: -19.7rem;
+   width: 10.8rem;
+   height: 19.7rem;
+   margin: 0 auto;
+   border-radius: 10px;
+   background-color: rgba(100, 100, 100, 0.2);
 }
 .key-button {
     font-weight: bold;

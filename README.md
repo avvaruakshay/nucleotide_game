@@ -1,4 +1,4 @@
-# nuc_game
+# Nucleotide Game
 
 ## Project setup
 ```
