@@ -1,10 +1,10 @@
 <template>
-  <div @keyup.A="keyPressed('A')" @keyup.C="keyPressed('C')" @keyup.G="keyPressed('G')" @keyup.T="keyPressed('T')">
+  <div @keyup.A="keyPressed('A')" @keyup.C="keyPressed('C')" @keyup.G="keyPressed('G')" @keyup.T="keyPressed('T')" @keyup.U="keyPressed('U')">
     <audio id="audio" src="../../public/files/button.wav" autoplay="false" ></audio>
     
     <el-row id="header">
       <el-col :offset="2" :span="20" align="left" style="padding: 15px">
-        Sequencing Games
+        Sequencing Game
         <span style="float: right">
           <el-button type="primary" icon="fas icon-fa-info-circle" size="mini" circle style="font-size: 1.5rem; padding: 0px" @click="openInfo"></el-button>
         </span>
@@ -19,7 +19,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="10">
-        <el-button id="start" type="info" @click="startGame()" size="mini">START</el-button>
+        <el-button id="start" type="info" @click="startClicked()" size="mini">START</el-button>
       </el-col>
     </el-row>
 
@@ -33,7 +33,7 @@
     <div style="height: 20rem">
       <div id="lanes-panel">
         <div style="display: inline-block; margin: 1rem">
-          <reference-lane ref="referenceStrand" :sequence="store.sequence"></reference-lane>
+          <reference-lane ref="referenceStrand" :nucleotides="store.referenceNucleotides" :sequence="store.sequence"></reference-lane>
         </div>
         <div style="display: inline-block; margin: 1rem">
           <player-lane ref="playerStrand"></player-lane>
@@ -78,7 +78,7 @@ export default {
     this.openInfo()
   },
   methods: {
-    startGame() {
+    startClicked() {
       const context = this
       const elem = document.getElementById('start')
       elem.style.cssText = "box-shadow: none; top: 5px; left: -5px"
@@ -88,8 +88,6 @@ export default {
       }, 75)
 
       store.startGame()
-      store.enableInput()
-      store.setTimeOuts()
     },
     buttonClick(id) {
       const context = this
@@ -109,11 +107,12 @@ export default {
     keyPressed(nuc){ this.buttonClick(`key-${nuc}`) },
     openInfo() {
       this.$alert(
-        'Hi Everyone! <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br> \
-         This is a simple game to understand sequencing by synthesis.\
-         As you start the game you get a sequence to which you have to generate \
-         the complementary strand.',
-        'Info', 
+        '<p style="font-size: 1rem; font-weight: bold"> Hi Everyone! <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br> \
+          This is a simple game to understand sequencing by synthesis.\
+          As you start the game you get a sequence to which you have to generate \
+          the complementary strand. \
+         </p>',
+        'Welcome!', 
         {
           confirmButtonText: 'Got it!',
           dangerouslyUseHTMLString: true,

@@ -33,6 +33,7 @@ body {
 
 .el-message-box {
   width: 80% !important;
+  max-width: 500px !important;
   /* font-family: 'Ubuntu', sans-serif; */
   font-family: 'Ubuntu Mono', monospace;
 }
