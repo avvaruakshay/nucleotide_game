@@ -1,12 +1,17 @@
 <template>
   <div @keyup.A="keyPressed('A')" @keyup.C="keyPressed('C')" @keyup.G="keyPressed('G')" @keyup.T="keyPressed('T')" @keyup.U="keyPressed('U')">
-    <audio id="audio" src="../../public/files/button.wav" autoplay="false" ></audio>
-    
+
+    <audio id="correct_audio" src="../../public/files/button_correct.wav" autoplay="false" ></audio>
+    <audio id="wrong_audio" src="../../public/files/button_wrong.wav" autoplay="false" ></audio>
+
     <el-row id="header">
       <el-col :offset="2" :span="20" align="left" style="padding: 15px">
         Sequencing Game
         <span style="float: right">
-          <el-button type="primary" icon="fas icon-fa-info-circle" size="mini" circle style="font-size: 1.5rem; padding: 0px" @click="openInfo"></el-button>
+          <el-button type="primary" icon="fas icon-fa-info-circle" size="mini" circle style="background-color: black; border: none; font-size: 1.5rem; padding: 0px" @click="openInfo"></el-button>
+        </span>
+        <span style="float: right">
+          <el-button type="info" icon="fas icon-fa-cog" size="mini" circle style="background-color: black; font-size: 1.5rem; padding: 0px; margin-right: 20px; border: none" @click="openSettings"></el-button>
         </span>
       </el-col>
     </el-row>
@@ -19,7 +24,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="10">
-        <el-button id="start" type="info" @click="startClicked()" size="mini">START</el-button>
+        <el-button id="start" :disabled="!(store.inputEnabled)" type="info" @click="startClicked()" size="mini">START</el-button>
       </el-col>
     </el-row>
 
@@ -53,6 +58,18 @@
         <el-button :disabled="store.inputEnabled" class="key-button" v-if="store.gameMode==='RNA'" id="key-U" type="warning" @click="buttonClick('key-U', 'button')">U</el-button>
       </el-col>
     </el-row>
+
+    <el-dialog :visible.sync="store.settingsVisible">
+      <template slot="title">
+        <div style="font-size: 1.2rem; font-weight: bold">Game Settings</div>
+      </template>
+      <el-row>
+        <el-col :offset="2" :span="20">
+          <span style="color: white; font-weight: bold; font-size: 1rem; margin-bottom: 20px">Game Time</span>
+          <el-slider v-model="store.totalTime" @change="store.changeTotalTime()" :format-tooltip="timerFormat" :step="30000" :min="30000" :max="300000" :marks="store.times"></el-slider>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -91,8 +108,6 @@ export default {
     },
     buttonClick(id) {
       const context = this
-      const sound = document.getElementById("audio");
-      sound.play();
       const nuc = id.slice(-1)
       const colors = { A: '#8490cf', C: '#84be87', G: '#f38d88', T: '#ffb861', U: '#ffb861'}
       const color = colors[nuc]
@@ -102,9 +117,13 @@ export default {
         const elem2 = document.getElementById(id)
         elem2.style.cssText = `box-shadow: -5px 5px ${color}, -4px 4px ${color}, -3px 3px ${color}, -2px 2px ${color}, -1px 1px ${color}; top: 0px; left: 0px`
       }, 150)
-      store.inputNucleotide(nuc)
+      const wrong_sound = document.getElementById("wrong_audio");
+      const correct_sound = document.getElementById("correct_audio");
+      store.inputNucleotide(nuc, correct_sound, wrong_sound)
     },
     keyPressed(nuc){ this.buttonClick(`key-${nuc}`) },
+    openSettings() { store.openSettings() },
+    timerFormat(val) { return `${(val/1000).toFixed(0)}s` },
     openInfo() {
       this.$alert(
         '<p style="font-size: 1rem; font-weight: bold"> Hi Everyone! <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br> \
@@ -221,6 +240,22 @@ export default {
 }
 #start:hover {
   background-color: #2693A1;
+}
+
+.el-dialog {
+  background-color: black !important;
+  color: white !important;
+}
+
+.el-slider__marks-text {
+  width: 50px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.el-tooltip__popper {
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 1.5rem;
 }
 </style>
 

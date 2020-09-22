@@ -1,16 +1,19 @@
+
 const store = {
-  inputNucleotide(nuc) {
+  inputNucleotide(nuc, correct_sound, wrong_sound) {
     const context = this
     const sequence = store.sequence
     const refNuc = store.referenceNucleotides[2]
     store.currPlayerNuc = nuc
     const complement = (store.gameMode === 'RNA') ? store.RNAcomplement : store.DNAcomplement
     if (nuc != complement[refNuc]) {
+      wrong_sound.play();
       store.playerScore += store.negativeScore
       store.wrongNucleotides += 1
       store.playerNucleotides = ['B', 'B', '_', 'X']
     }
-    else { 
+    else {
+      correct_sound.play();
       store.playerScore += store.positiveScore
       store.correctNucleotides += 1
       store.playerNucleotides = ['B', 'B', '_', nuc]
@@ -47,6 +50,12 @@ const store = {
   updateTimer(value) {
     store.timer = value
   },
+  openSettings() {
+    store.settingsVisible = true
+  },
+  changeTotalTime(val) {
+    store.timer = store.totalTime
+  },
   setTimeOuts() {
     for (let i=0; i < store.totalTime/100; i++) {
       store.timeOuts.push(window.setTimeout(() => { store.updateTimer(store.totalTime-((i+1)*100)) }, (i+1)*100))
@@ -79,8 +88,10 @@ const store = {
   playerNucleotides: [],
   playerScore: 0,
   totalTime: 30000,
+  times: { 30000: '30s', 60000: '1m', 120000: '2m', 180000: '3m', 300000: '5m' },
   playerTime: 0,
   timer: 0,
+  settingsVisible: false,
   inputEnabled: true,
 }
 
