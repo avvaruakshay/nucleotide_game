@@ -33,6 +33,7 @@ const store = {
     store.setTimeOuts()
   },
   endGame() {
+    document.getElementById('main-home').blur()
     store.disableInput()
     for(let t in store.timeOuts) {
       window.clearTimeout(store.timeOuts[t])
@@ -52,6 +53,18 @@ const store = {
   },
   openSettings() {
     store.settingsVisible = true
+  },
+  openInfo() {
+    store.infoVisible = true
+  },
+  infoNav(dir) {
+    if (dir==='P') { store.infoPage -= 1 }
+    else { store.infoPage += 1 }
+    store.infoPrevDisabled = false
+    store.infoNextDisabled = false
+    console.log(store.infoPage)
+    if (store.infoPage === 1) { store.infoPrevDisabled = true }
+    if (store.infoPage === 3) { store.infoNextDisabled = true }
   },
   changeTotalTime(val) {
     store.timer = store.totalTime
@@ -92,6 +105,10 @@ const store = {
   playerTime: 0,
   timer: 0,
   settingsVisible: false,
+  infoVisible: true,
+  infoPrevDisabled: true,
+  infoNextDisabled: false,
+  infoPage: 1,
   inputEnabled: true,
 }
 

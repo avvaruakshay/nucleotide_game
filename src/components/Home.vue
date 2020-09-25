@@ -1,5 +1,5 @@
 <template>
-  <div @keyup.A="keyPressed('A')" @keyup.C="keyPressed('C')" @keyup.G="keyPressed('G')" @keyup.T="keyPressed('T')" @keyup.U="keyPressed('U')">
+  <div id="main-home" @keyup.A="keyPressed('A')" @keyup.C="keyPressed('C')" @keyup.G="keyPressed('G')" @keyup.T="keyPressed('T')" @keyup.U="keyPressed('U')" tabindex="0">
 
     <audio id="correct_audio" src="../../public/files/button_correct.wav" autoplay="false" ></audio>
     <audio id="wrong_audio" src="../../public/files/button_wrong.wav" autoplay="false" ></audio>
@@ -51,15 +51,15 @@
 
     <el-row :gutter="30" style="margin: 20px 0px">
       <el-col>
-        <el-button :disabled="store.inputEnabled" class="key-button" id="key-A" type="primary" @click="buttonClick('key-A', 'button')">A</el-button>
-        <el-button :disabled="store.inputEnabled" class="key-button" id="key-C" type="success" @click="buttonClick('key-C', 'button')">C</el-button>
-        <el-button :disabled="store.inputEnabled" class="key-button" id="key-G" type="danger" @click="buttonClick('key-G', 'button')">G</el-button>
-        <el-button :disabled="store.inputEnabled" class="key-button" v-if="store.gameMode==='DNA'" id="key-T" type="warning" @click="buttonClick('key-T', 'button')">T</el-button>
-        <el-button :disabled="store.inputEnabled" class="key-button" v-if="store.gameMode==='RNA'" id="key-U" type="warning" @click="buttonClick('key-U', 'button')">U</el-button>
+        <el-button :disabled="store.inputEnabled" class="key-button" title="Adenine" id="key-A" type="primary" @click="buttonClick('key-A', 'button')">A</el-button>
+        <el-button :disabled="store.inputEnabled" class="key-button" title="Cytosine" id="key-C" type="success" @click="buttonClick('key-C', 'button')">C</el-button>
+        <el-button :disabled="store.inputEnabled" class="key-button" title="Guanine" id="key-G" type="danger" @click="buttonClick('key-G', 'button')">G</el-button>
+        <el-button :disabled="store.inputEnabled" class="key-button" title="Thymine" v-if="store.gameMode==='DNA'" id="key-T" type="warning" @click="buttonClick('key-T', 'button')">T</el-button>
+        <el-button :disabled="store.inputEnabled" class="key-button" title="Uracil" v-if="store.gameMode==='RNA'" id="key-U" type="warning" @click="buttonClick('key-U', 'button')">U</el-button>
       </el-col>
     </el-row>
 
-    <el-dialog :visible.sync="store.settingsVisible">
+    <el-dialog :visible.sync="store.settingsVisible" @closed="settingsClosed()" style="width: 96vw; max-width: 1000px; margin: auto">
       <template slot="title">
         <div style="font-size: 1.2rem; font-weight: bold">Game Settings</div>
       </template>
@@ -67,6 +67,87 @@
         <el-col :offset="2" :span="20">
           <span style="color: white; font-weight: bold; font-size: 1rem; margin-bottom: 20px">Game Time</span>
           <el-slider v-model="store.totalTime" @change="store.changeTotalTime()" :format-tooltip="timerFormat" :step="30000" :min="30000" :max="300000" :marks="store.times"></el-slider>
+        </el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog :visible.sync="store.infoVisible">
+      <template slot="title">
+        <div style="font-size: 1.2rem; font-weight: bold">Game Info</div>
+      </template>
+      <div style="font-size: 1rem; font-weight: bold; word-break: keep-all; color: #aeaeae; margin-top: 0px">
+        <el-row v-if="store.infoPage === 1">
+          <el-col :offset="0" :span="24">
+            <p> 
+              Hi Everyone! 
+              <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br>
+              This is a simple game to understand sequencing by synthesis.
+              As you start the game you get a sequence to which you have to generate 
+              the complementary strand. 
+            </p>
+          </el-col>
+        </el-row>
+
+        <el-row v-else-if="store.infoPage === 2">
+          <el-row style="font-size: 1.4rem; margin-bottom: 20px">DNA complementarity</el-row>
+          <el-row>
+            <el-col :offset="6" :span="4">
+              <nucleotide base='A'></nucleotide>
+              Adenine
+            </el-col>  
+            <el-col :span="4">
+              <i class="fas icon-fa-chevron-left icon-fa-2x" style="margin-top: 6px"></i>
+              <i class="fas icon-fa-chevron-right icon-fa-2x" style="margin-top: 6px"></i>
+            </el-col>  
+            <el-col :span="4">
+              <nucleotide base='T'></nucleotide>
+              Thymine
+            </el-col>  
+          </el-row>
+          <el-row style="margin-top: 20px">
+            <el-col :offset="6" :span="4">
+              <nucleotide base='C'></nucleotide>
+              Cytosine
+            </el-col>  
+            <el-col :span="4">
+              <i class="fas icon-fa-chevron-left icon-fa-2x" style="margin-top: 6px"></i>
+              <i class="fas icon-fa-chevron-right icon-fa-2x" style="margin-top: 6px"></i>
+            </el-col>  
+            <el-col :span="4">
+              <nucleotide base='G'></nucleotide>
+              Guanine
+            </el-col>  
+          </el-row>
+
+          <el-row style="font-size: 1.4rem; margin: 20px 0px">RNA complementarity</el-row>
+          <el-row>
+            <el-col :offset="6" :span="4">
+              <nucleotide base='U'></nucleotide>
+              Uracil
+            </el-col>  
+            <el-col :span="4">
+              <i class="fas icon-fa-chevron-left icon-fa-2x" style="margin-top: 6px"></i>
+              <i class="fas icon-fa-chevron-right icon-fa-2x" style="margin-top: 6px"></i>
+            </el-col>  
+            <el-col :span="4">
+              <nucleotide base='A'></nucleotide>
+              Adenine
+            </el-col>  
+          </el-row>
+        </el-row>
+
+        <el-row v-else-if="store.infoPage === 3">
+           <video width="320" height="560" controls>
+            <source src="../../public/files/Tutorial.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video> 
+        </el-row>
+      </div>
+
+      <el-row style="margin-top: 20px">
+        <el-col align="right">
+          <el-button size="mini" :disabled="store.infoPrevDisabled" type="primary" style="margin-right: 2px" @click="infoNav('P')"><i class="fas icon-fa-angle-left"></i></el-button>
+          <el-button size="mini" :disabled="store.infoNextDisabled" type="primary" @click="infoNav('N')"><i class="fas icon-fa-angle-right"></i></el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -78,13 +159,14 @@ import { store } from '../scripts/store.js'
 import ReferenceLane from './ReferenceLane.vue'
 import PlayerLane from './PlayerLane.vue'
 import EndGame from './EndGame.vue'
+import Nucleotide from './Nucleotide.vue'
 
 const gsap = require('gsap')
 
 export default {
   name: 'Home',
   components: {
-    ReferenceLane, PlayerLane, EndGame
+    ReferenceLane, PlayerLane, EndGame, Nucleotide
   },
   data() {
     return { 
@@ -104,6 +186,8 @@ export default {
         elem2.style.cssText = "box-shadow: -5px 5px #03B2C9, -4px 4px #03B2C9, -3px 3px #03B2C9, -2px 2px #03B2C9, -1px 1px #03B2C9; top: 0px; left: 0px"
       }, 75)
 
+      document.getElementById('main-home').focus()
+
       store.startGame()
     },
     buttonClick(id) {
@@ -122,22 +206,34 @@ export default {
       store.inputNucleotide(nuc, correct_sound, wrong_sound)
     },
     keyPressed(nuc){ this.buttonClick(`key-${nuc}`) },
-    openSettings() { store.openSettings() },
+    openSettings() { 
+      document.getElementsByClassName('el-tooltip__popper').forEach( (elem) => {
+        elem.style.opacity = 1
+      })
+      store.openSettings() 
+    },
+    openInfo() { store.openInfo() },
     timerFormat(val) { return `${(val/1000).toFixed(0)}s` },
-    openInfo() {
-      this.$alert(
-        '<p style="font-size: 1rem; font-weight: bold"> Hi Everyone! <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br> \
-          This is a simple game to understand sequencing by synthesis.\
-          As you start the game you get a sequence to which you have to generate \
-          the complementary strand. \
-         </p>',
-        'Welcome!', 
-        {
-          confirmButtonText: 'Got it!',
-          dangerouslyUseHTMLString: true,
-        }
-      );
+    infoNav(dir) { store.infoNav(dir) },
+    settingsClosed() {
+      document.getElementsByClassName('el-tooltip__popper').forEach( (elem) => {
+        elem.style.opacity = 0
+      })
     }
+    // openInfo() {
+    //   this.$alert(
+    //     '<p style="font-size: 1rem; font-weight: bold"> Hi Everyone! <i class="fas icon-fa-smile" style="color: yellow; background-color: black; border-radius: 15px"></i> <br> \
+    //       This is a simple game to understand sequencing by synthesis.\
+    //       As you start the game you get a sequence to which you have to generate \
+    //       the complementary strand. \
+    //      </p>',
+    //     'Welcome!', 
+    //     {
+    //       confirmButtonText: 'Got it!',
+    //       dangerouslyUseHTMLString: true,
+    //     }
+    //   );
+    // }
   },
   computed: {
     
@@ -245,6 +341,11 @@ export default {
 .el-dialog {
   background-color: black !important;
   color: white !important;
+  width: 94vw !important;
+  max-width: 600px !important;
+  /* white-space: normal !important; */
+  /* hyphens: auto !important; */
+  /* word-break: keep-all !important; */
 }
 
 .el-slider__marks-text {
